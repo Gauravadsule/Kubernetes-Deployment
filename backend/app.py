@@ -2,18 +2,19 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-@app.route('/api/data', methods=['GET'])
-def get_data():
-    return jsonify({"message": "Hello from Flask!"})
+# In-memory task list
+tasks = [{"id": 1, "task": "Learn Flask"}, {"id": 2, "task": "Deploy with Kubernetes"}]
 
-@app.route('/api/submit', methods=['POST'])
-def submit_data():
-    data = request.json
-    response = {
-        "selected_option": data.get("option"),
-        "status": "Data received successfully!"
-    }
-    return jsonify(response)
+# REST API Routes
+@app.route('/api/tasks', methods=['GET'])
+def get_tasks():
+    return jsonify(tasks)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+@app.route('/api/tasks', methods=['POST'])
+def add_task():
+    task = request.json
+    tasks.append({"id": len(tasks) + 1, "task": task["task"]})
+    return jsonify({"message": "Task added successfully!"}), 201
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
